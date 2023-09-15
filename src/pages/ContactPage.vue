@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <h1>Contact Page</h1>
+    <h4>Contact Page</h4>
   </q-page>
 </template>
 
