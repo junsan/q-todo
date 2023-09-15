@@ -21,11 +21,43 @@
     </div>
     </q-item>
   </q-list>
+  <q-page-sticky position="bottom-right" :offset="[18, 18]">
+    <q-btn fab icon="add" color="blue" @click="medium = true" />
+  </q-page-sticky>
+
+  <q-dialog
+      v-model="medium"
+    >
+    <q-card style="width: 700px; max-width: 80vw;">
+      <q-card-section>
+        <div class="text-h6">Add Task</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <q-input filled bottom-slots v-model="text" placeholder="Add task here" counter maxlength="100" :dense="dense">
+          <template v-slot:before>
+            <q-icon name="event" />
+          </template>
+
+          <template v-slot:append>
+            <q-btn round dense flat icon="add" />
+          </template>
+        </q-input>
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-cyan text-white">
+        <q-btn flat label="Close" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 
 const todoStore = useTodoStore()
+
+const medium = ref(false)
 
 </script>
