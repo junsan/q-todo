@@ -34,13 +34,13 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-input filled bottom-slots v-model="text" placeholder="Add task here" counter maxlength="100" :dense="dense">
+        <q-input filled bottom-slots v-model="task" placeholder="Add task here" counter maxlength="100" >
           <template v-slot:before>
             <q-icon name="event" />
           </template>
 
           <template v-slot:append>
-            <q-btn round dense flat icon="add" />
+            <q-btn @click="addTask" round dense flat icon="add" />
           </template>
         </q-input>
       </q-card-section>
@@ -59,5 +59,19 @@ import { useTodoStore } from 'src/stores/todo-store'
 const todoStore = useTodoStore()
 
 const medium = ref(false)
+
+const task = ref('')
+
+const addTask = () => {
+  const tasks = {
+    id: Math.floor(Math.random() * 100),
+    name: task,
+    is_completed: false
+  }
+
+  todoStore.todos.push(tasks)
+  medium.value = false
+  task.value = ''
+}
 
 </script>
