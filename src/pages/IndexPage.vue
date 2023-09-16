@@ -3,19 +3,20 @@
       v-model="todoStore.openDrawer"
       show-if-above
       bordered
-      style="background-color:  #1976d261; color: #333; padding-top: 50px;"
+      style="background-color: rgb(25 121 215 / 64%); color: #fff; padding-top: 50px; font-size: 18px;"
     >
       <q-list >
         <EssentialLink
-          v-for="link in linksList"
+          v-for="link in todoStore.linksList"
           :key="link.title"
           v-bind="link"
+          @showTasks="showTasks"
         />
       </q-list>
     </q-drawer>
 
   <q-list>
-    <q-item v-for="(todo, index) in todoStore.todos" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
+    <q-item v-for="(todo, index) in todos" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
       <q-item-section avatar>
         <q-btn @click.stop round color="secondary" icon="check" />
       </q-item-section>
@@ -130,29 +131,6 @@ import { ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 import EssentialLink from 'components/EssentialLink.vue'
 
-console.log(useTodoStore.openDrawer)
-
-const linksList = [
-  {
-    title: 'Home',
-    caption: 'quasar.dev',
-    icon: 'home',
-    link: '/#/'
-  },
-  {
-    title: 'About',
-    caption: 'github.com/quasarframework',
-    icon: 'description',
-    link: '/#/about'
-  },
-  {
-    title: 'Contact',
-    caption: 'chat.quasar.dev',
-    icon: 'smartphone',
-    link: '/#/contact'
-  }
-]
-
 const todoStore = useTodoStore()
 
 const addModal = ref(false)
@@ -163,6 +141,12 @@ const index = ref(null)
 const date = ref('2023/09/01')
 
 const task = ref('')
+const todos = ref(todoStore.todos)
+
+const showTasks = (id) => {
+  if (id === 0) todos.value = todoStore.todos
+  else todos.value = todoStore.todos.filter(todo => todo.list_id === Number(id))
+}
 
 const addTask = () => {
   let tasks = {
