@@ -14,7 +14,7 @@
         />
       </q-list>
     </q-drawer>
-
+  <h4 style="margin: 15px; color: #333">{{ subtitle }}</h4>
   <q-list>
     <q-item v-for="(todo, index) in todos" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
       <q-item-section avatar>
@@ -36,6 +36,7 @@
     <q-btn fab icon="add" color="blue" @click="addModal = true" />
   </q-page-sticky>
 
+  <!-- Add Task -->
   <q-dialog
       v-model="addModal"
     >
@@ -55,7 +56,7 @@
           </template>
         </q-input>
 
-        <!-- Date -->
+        <!-- Add Date -->
         <div class="q-pa-md" style="max-width: 300px">
           <label>Due Date</label>
           <q-input filled v-model="date" mask="date" :rules="['date']">
@@ -72,7 +73,7 @@
             </template>
           </q-input>
         </div>
-
+        <q-select standout="bg-teal text-white" v-model="selectedList" :options="options" />
       </q-card-section>
 
       <q-card-actions align="right" class="bg-cyan text-white">
@@ -124,6 +125,24 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <!-- Add List -->
+  <q-dialog v-model="prompt" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">ADD LIST</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input dense v-model="titleList" autofocus @keyup.enter="prompt = false" />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn @click="addList" flat label="Save" v-close-popup />
+        </q-card-actions>
+      </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
@@ -132,25 +151,57 @@ import { useTodoStore } from 'src/stores/todo-store'
 import EssentialLink from 'components/EssentialLink.vue'
 
 const todoStore = useTodoStore()
-
+const options = ref([])
 const addModal = ref(false)
 const editModal = ref(false)
 const editInputTask = ref('')
 const editDateTask = ref('')
 const index = ref(null)
 const date = ref('2023/09/01')
+const selectedList = ref(0)
 
+const titleList = ref('')
+const prompt = ref(false)
 const task = ref('')
 const todos = ref(todoStore.todos)
+const subtitle = ref('Today')
 
-const showTasks = (id) => {
+todoStore.linksList.forEach(todo => {
+  let taskList = {
+    label: todo.title,
+    value: todo.id
+  }
+  options.value.push(taskList)
+  taskList = {}
+})
+
+const showTasks = (id, title) => {
   if (id === 0) todos.value = todoStore.todos
   else todos.value = todoStore.todos.filter(todo => todo.list_id === Number(id))
+  todoStore.openDrawer = false
+  subtitle.value = title
+  if (id === 4) {
+    prompt.value = true
+  }
+}
+
+const addList = () => {
+  let list = {
+    id: Math.floor(Math.random() * 100),
+    title: titleList.value,
+    icon: 'description',
+    link: '/#/'
+  }
+
+  todoStore.linksList.push(list)
+  titleList.value = ''
+  list = {}
 }
 
 const addTask = () => {
   let tasks = {
     id: Math.floor(Math.random() * 100),
+    list_id: selectedList.value.value,
     name: task.value,
     date: date.value,
     is_completed: false

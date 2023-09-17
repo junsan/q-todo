@@ -3,7 +3,7 @@
     clickable
     tag="a"
     :href="link"
-    @click.prevent="$emit('showTasks', id)"
+    @click.prevent="$emit('showTasks', id, title)"
   >
     <q-item-section
       v-if="icon"
