@@ -22,7 +22,7 @@
       </q-item-section>
       <q-item-section>
         <q-item-label style="font-size: 16px;">{{ todo.name }}</q-item-label>
-        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.date">{{ todo.date }}</q-item-label>
+        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.date">Due Date: {{ todo.date }}</q-item-label>
       </q-item-section>
       <div>
         <q-fab @click.stop @keypress.stop color="cyan" text-color="black" icon="keyboard_arrow_left" direction="left">
@@ -33,7 +33,7 @@
     </q-item>
   </q-list>
   <q-page-sticky position="bottom-right" :offset="[18, 18]">
-    <q-btn fab icon="add" color="blue" @click="addModal = true" />
+    <q-btn fab icon="add" color="blue" @click="addTaskModal" />
   </q-page-sticky>
 
   <!-- Add Task -->
@@ -82,6 +82,7 @@
     </q-card>
   </q-dialog>
 
+  <!-- Edit Modal -->
   <q-dialog
       v-model="editModal"
     >
@@ -118,8 +119,8 @@
               </template>
             </q-input>
           </div>
+          <q-select standout="bg-teal text-white" v-model="editSelectedList" :options="options" />
         </q-card-section>
-
       <q-card-actions align="right" class="bg-cyan text-white">
         <q-btn flat label="Close" v-close-popup />
       </q-card-actions>
@@ -143,6 +144,26 @@
         </q-card-actions>
       </q-card>
   </q-dialog>
+  <br><br>
+  <!-- Completed Task -->
+  <h4 style="margin: 15px; color: #aaa">Completed</h4>
+  <q-list>
+    <q-item v-for="(todo, index) in todos" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
+      <q-item-section avatar>
+        <q-btn @click.stop round color="white" class="text-black" icon="close" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label style="font-size: 16px; color: #aaa; text-decoration: line-through;">{{ todo.name }}</q-item-label>
+        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.date">Completed Date: {{ todo.date }}</q-item-label>
+      </q-item-section>
+      <div>
+        <q-fab @click.stop @keypress.stop color="white" text-color="black" icon="keyboard_arrow_left" direction="left">
+          <q-fab-action color="primary" @click="todoStore.deleteTodo(index)" icon="delete" />
+          <q-fab-action color="secondary" @click="openEditModal(todo, index)" icon="edit" />
+        </q-fab>
+      </div>
+    </q-item>
+  </q-list>
 </template>
 
 <script setup>
@@ -159,7 +180,8 @@ const editDateTask = ref('')
 const index = ref(null)
 const date = ref('2023/09/01')
 const selectedList = ref(0)
-
+const editSelectedList = ref(0)
+const list = ref(0)
 const titleList = ref('')
 const prompt = ref(false)
 const task = ref('')
@@ -180,6 +202,7 @@ const showTasks = (id, title) => {
   else todos.value = todoStore.todos.filter(todo => todo.list_id === Number(id))
   todoStore.openDrawer = false
   subtitle.value = title
+  list.value = id
   if (id === 4) {
     prompt.value = true
   }
@@ -198,6 +221,11 @@ const addList = () => {
   list = {}
 }
 
+const addTaskModal = () => {
+  selectedList.value = subtitle.value
+  addModal.value = true
+}
+
 const addTask = () => {
   let tasks = {
     id: Math.floor(Math.random() * 100),
@@ -211,6 +239,7 @@ const addTask = () => {
   addModal.value = false
   task.value = ''
   tasks = {}
+  todos.value = todoStore.todos.filter(todo => todo.list_id === selectedList.value.value)
 }
 
 const openEditModal = (todo, i) => {
@@ -218,12 +247,19 @@ const openEditModal = (todo, i) => {
   editModal.value = true
   editInputTask.value = todo.name
   editDateTask.value = todo.date
+  const x = options.value.filter(option => {
+    return option.value === todo.list_id
+  })
+  editSelectedList.value = x[0].label
 }
 
 const editTask = () => {
   todoStore.todos[index.value].name = editInputTask.value
   todoStore.todos[index.value].date = editDateTask.value
+  todoStore.todos[index.value].list_id = editSelectedList.value.value
   editModal.value = false
+  if (list.value === 0) todos.value = todoStore.todos
+  else todos.value = todoStore.todos.filter(todo => todo.list_id === list.value)
 }
 
 </script>
