@@ -1,3 +1,5 @@
+import LoginPage from '../pages/LoginPage.vue'
+
 const routes = [
   {
     path: '/',
@@ -5,7 +7,12 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
       { path: '/about', component: () => import('pages/AboutPage.vue') },
-      { path: '/contact', component: () => import('pages/ContactPage.vue') }
+      { path: '/contact', component: () => import('pages/ContactPage.vue') },
+      {
+        path: '/login',
+        name: 'loginPage',
+        component: LoginPage
+      }
     ]
   },
 

@@ -164,6 +164,7 @@
       </div>
     </q-item>
   </q-list>
+  <RouterLink :to="'/login'">Login</RouterLink>
 </template>
 
 <script setup>
