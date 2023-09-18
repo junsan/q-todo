@@ -18,7 +18,6 @@
         <div>Q-Todo v1.1</div>
       </q-toolbar>
     </q-header>
-    <RouterLink :to="'/login'">Login</RouterLink>
     <q-page-container>
       <router-view></router-view>
     </q-page-container>

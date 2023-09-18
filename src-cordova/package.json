@@ -18,6 +18,15 @@
   "cordova": {
     "platforms": [
       "android"
-    ]
+    ],
+    "plugins": {
+      "cordova-plugin-googleplus": {
+        "WEB_APPLICATION_CLIENT_ID": "488602956046-ca26ms80mgai210aitkno34s5p93ok3f.apps.googleusercontent.com",
+        "PLAY_SERVICES_VERSION": "15.0.1"
+      }
+    }
+  },
+  "dependencies": {
+    "cordova-plugin-googleplus": "8.5.2"
   }
 }
