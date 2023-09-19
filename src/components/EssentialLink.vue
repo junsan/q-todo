@@ -2,7 +2,7 @@
   <q-item
     clickable
     tag="a"
-    @click.prevent="$emit('showTasks', id, title)"
+    @click.prevent="$emit('showTasks', id, name)"
   >
     <q-item-section
       avatar

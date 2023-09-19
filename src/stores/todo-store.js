@@ -39,6 +39,18 @@ export const useTodoStore = defineStore('todo', {
       await api.get('/api/list_tasks_completed/' + listId).then((response) => {
         this.completedTasks.value = response.data.data
       })
+    },
+    addList (name) {
+      const bodyFormData = new FormData()
+      bodyFormData.append('user_id', 1)
+      bodyFormData.append('name', name)
+
+      api.post('/api/lists', bodyFormData)
+        .then(response => {
+          if (response.statusText === 'Created') {
+            this.lists.value.push(response.data.data)
+          }
+        })
     }
   }
 })

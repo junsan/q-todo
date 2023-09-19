@@ -7,11 +7,26 @@
     >
       <q-list >
         <EssentialLink
-          v-for="link in lists"
+          v-for="link in todoStore.lists.value"
           :key="link.name"
           v-bind="link"
           @showTasks="showTasks"
         />
+        <q-item
+          clickable
+          tag="a"
+          @click.prevent="prompt = true"
+        >
+          <q-item-section
+            avatar
+          >
+            <q-icon name="add" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label style="color: #fff;">Add List</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
   <h4 style="margin: 15px; color: #333">{{ subtitle }}</h4>
@@ -187,7 +202,6 @@ const titleList = ref('')
 const prompt = ref(false)
 const task = ref('')
 const todos = ref([])
-const lists = ref([])
 const completedTasks = ref([])
 const subtitle = ref('Today')
 
@@ -204,7 +218,6 @@ onMounted(async () => {
 
 onMounted(async () => {
   await todoStore.getLists()
-  lists.value = todoStore.lists.value
 })
 
 const showTasks = async (listId, title) => {
@@ -222,6 +235,7 @@ const showTasks = async (listId, title) => {
 }
 
 const addList = () => {
+  todoStore.addList(titleList.value)
   titleList.value = ''
 }
 
