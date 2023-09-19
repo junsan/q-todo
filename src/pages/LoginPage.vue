@@ -2,7 +2,7 @@
   <div class="flex flex-center" style="padding-top: 150px;" >
     <q-icon name="beenhere" color="teal" size="4.4em" />
     <h4 color="teal">Q-Todo</h4>
-  <div style="width: 100%; margin: 0px 100px;">
+  <div style="width: 100%; margin: 0px 40px;">
     <q-input bg-color="teal" label-color="white" rounded standout="bg-teal text-white" bottom-slots v-model="text" label="Email">
       <template v-slot:prepend>
         <q-icon name="email" color="white" />
@@ -19,7 +19,7 @@
         <q-icon name="close" @click="text = ''" class="cursor-pointer" color="white" />
       </template>
     </q-input>
-    <q-btn size="md" class="full-width" rounded label="Sign up or Log in" @click="onDelayedClick" outline color="teal" no-caps />
+    <q-btn :to="'/index'" size="md" class="full-width" rounded label="Sign up or Log in" @click="onDelayedClick" outline color="teal" no-caps />
     </div>
   </div>
 </template>

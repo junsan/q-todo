@@ -22,7 +22,7 @@
       </q-item-section>
       <q-item-section>
         <q-item-label style="font-size: 16px;">{{ todo.name }}</q-item-label>
-        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.date">Due Date: {{ todo.date }}</q-item-label>
+        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.due_date">Due Date: {{ todo.due_date }}</q-item-label>
       </q-item-section>
       <div>
         <q-fab @click.stop @keypress.stop color="cyan" text-color="black" icon="keyboard_arrow_left" direction="left">
@@ -168,7 +168,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 import EssentialLink from 'components/EssentialLink.vue'
 
@@ -186,8 +186,14 @@ const list = ref(0)
 const titleList = ref('')
 const prompt = ref(false)
 const task = ref('')
-const todos = ref(todoStore.todos)
+const todos = ref([])
 const subtitle = ref('Today')
+
+onMounted(() => {
+  todoStore.getTasks()
+  todos.value = todoStore.todos.value
+  console.log(todos.value)
+})
 
 todoStore.linksList.forEach(todo => {
   let taskList = {

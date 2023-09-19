@@ -1,30 +1,9 @@
 import { defineStore } from 'pinia'
+import { api } from 'boot/axios'
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
-    todos: [
-      {
-        id: 1,
-        list_id: 1,
-        name: 'Todo 1',
-        date: '',
-        is_completed: false
-      },
-      {
-        id: 2,
-        name: 'Todo 2',
-        list_id: 1,
-        date: '2023/03/01',
-        is_completed: true
-      },
-      {
-        id: 3,
-        name: 'Todo 3',
-        list_id: 2,
-        date: '2023/03/21',
-        is_completed: false
-      }
-    ],
+    todos: [],
     openDrawer: false,
     linksList: [
       {
@@ -65,6 +44,11 @@ export const useTodoStore = defineStore('todo', {
   actions: {
     deleteTodo (index) {
       this.todos.splice(index, 1)
+    },
+    async getTasks () {
+      api.get('/api/tasks').then((response) => {
+        this.todos.value = response.data.data
+      })
     }
   }
 })
