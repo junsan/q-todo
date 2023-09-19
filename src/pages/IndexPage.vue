@@ -148,13 +148,13 @@
   <!-- Completed Task -->
   <h4 style="margin: 15px; color: #aaa">Completed</h4>
   <q-list>
-    <q-item v-for="(todo, index) in todos" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
+    <q-item v-for="(todo, index) in completedTasks" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
       <q-item-section avatar>
         <q-btn @click.stop round color="white" class="text-black" icon="close" />
       </q-item-section>
       <q-item-section>
         <q-item-label style="font-size: 16px; color: #aaa; text-decoration: line-through;">{{ todo.name }}</q-item-label>
-        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.date">Completed Date: {{ todo.date }}</q-item-label>
+        <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.due_date">Completed Date: {{ todo.due_date }}</q-item-label>
       </q-item-section>
       <div>
         <q-fab @click.stop @keypress.stop color="white" text-color="black" icon="keyboard_arrow_left" direction="left">
@@ -187,12 +187,18 @@ const titleList = ref('')
 const prompt = ref(false)
 const task = ref('')
 const todos = ref([])
+const completedTasks = ref([])
 const subtitle = ref('Today')
 
-onMounted(() => {
-  todoStore.getTasks()
-  todos.value = todoStore.todos.value
+onMounted(async () => {
+  await todoStore.getTasks()
+  todos.value = todoStore.tasks.value
   console.log(todos.value)
+})
+
+onMounted(async () => {
+  await todoStore.getCompletedTasks()
+  completedTasks.value = todoStore.completedTasks.value
 })
 
 todoStore.linksList.forEach(todo => {

@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header v-if="false" elevated>
+    <q-header elevated>
       <q-toolbar>
         <q-btn
           flat
@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          All Tasks
+          Q-Todo
         </q-toolbar-title>
 
         <div>Q-Todo v1.1</div>

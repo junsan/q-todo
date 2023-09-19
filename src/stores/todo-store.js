@@ -3,7 +3,8 @@ import { api } from 'boot/axios'
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
-    todos: [],
+    tasks: [],
+    completedTasks: [],
     openDrawer: false,
     linksList: [
       {
@@ -40,14 +41,24 @@ export const useTodoStore = defineStore('todo', {
   }),
   getters: {
     doubleCount: (state) => state.counter * 2
+    // async getUnCompletedTask () {
+    //   await api.get('/api/tasks').then((response) => {
+    //     return response.data.data
+    //   })
+    // }
   },
   actions: {
     deleteTodo (index) {
       this.todos.splice(index, 1)
     },
     async getTasks () {
-      api.get('/api/tasks').then((response) => {
-        this.todos.value = response.data.data
+      await api.get('/api/tasks').then((response) => {
+        this.tasks.value = response.data.data
+      })
+    },
+    async getCompletedTasks () {
+      await api.get('/api/completed').then((response) => {
+        this.completedTasks.value = response.data.data
       })
     }
   }
