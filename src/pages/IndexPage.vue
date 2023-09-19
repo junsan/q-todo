@@ -7,8 +7,8 @@
     >
       <q-list >
         <EssentialLink
-          v-for="link in todoStore.linksList"
-          :key="link.title"
+          v-for="link in lists"
+          :key="link.name"
           v-bind="link"
           @showTasks="showTasks"
         />
@@ -187,6 +187,7 @@ const titleList = ref('')
 const prompt = ref(false)
 const task = ref('')
 const todos = ref([])
+const lists = ref([])
 const completedTasks = ref([])
 const subtitle = ref('Today')
 
@@ -201,37 +202,27 @@ onMounted(async () => {
   completedTasks.value = todoStore.completedTasks.value
 })
 
-todoStore.linksList.forEach(todo => {
-  let taskList = {
-    label: todo.title,
-    value: todo.id
-  }
-  options.value.push(taskList)
-  taskList = {}
+onMounted(async () => {
+  await todoStore.getLists()
+  lists.value = todoStore.lists.value
 })
 
-const showTasks = (id, title) => {
-  if (id === 0) todos.value = todoStore.todos
-  else todos.value = todoStore.todos.filter(todo => todo.list_id === Number(id))
+const showTasks = async (listId, title) => {
+  await todoStore.getTasksByList(listId)
+  todos.value = todoStore.tasks.value
+  await todoStore.getTasksCompletedByList(listId)
+  completedTasks.value = todoStore.completedTasks.value
+
   todoStore.openDrawer = false
   subtitle.value = title
-  list.value = id
-  if (id === 4) {
-    prompt.value = true
-  }
+  list.value = listId
+  // if (listId === 4) {
+  //   prompt.value = true
+  // }
 }
 
 const addList = () => {
-  let list = {
-    id: Math.floor(Math.random() * 100),
-    title: titleList.value,
-    icon: 'description',
-    link: '/#/'
-  }
-
-  todoStore.linksList.push(list)
   titleList.value = ''
-  list = {}
 }
 
 const addTaskModal = () => {

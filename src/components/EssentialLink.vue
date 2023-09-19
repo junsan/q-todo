@@ -2,18 +2,16 @@
   <q-item
     clickable
     tag="a"
-    :href="link"
     @click.prevent="$emit('showTasks', id, title)"
   >
     <q-item-section
-      v-if="icon"
       avatar
     >
-      <q-icon :name="icon" />
+      <q-icon name="playlist_add" />
     </q-item-section>
 
     <q-item-section>
-      <q-item-label style="color: #fff;">{{ title }}</q-item-label>
+      <q-item-label style="color: #fff;">{{ name }}</q-item-label>
     </q-item-section>
   </q-item>
   <q-separator />
@@ -27,21 +25,9 @@ defineProps({
     type: Number,
     required: true
   },
-  title: {
+  name: {
     type: String,
     required: true
-  },
-  caption: {
-    type: String,
-    default: ''
-  },
-  link: {
-    type: String,
-    default: '#'
-  },
-  icon: {
-    type: String,
-    default: ''
   }
 })
 
