@@ -5,6 +5,8 @@ export const useTodoStore = defineStore('todo', {
   state: () => ({
     tasks: [],
     lists: [],
+    username: '',
+    status: false,
     completedTasks: [],
     openDrawer: false
   }),
@@ -77,6 +79,18 @@ export const useTodoStore = defineStore('todo', {
       api.put('/api/tasks/' + task.id + '?user_id=1&due_date=' + date[0] + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
         this.getTasksByList(response.data.data.todo_list_id)
       })
+    },
+    async login (email, password) {
+      const bodyFormData = new FormData()
+      bodyFormData.append('email', email)
+      bodyFormData.append('password', password)
+      await api.post('/api/login', bodyFormData)
+        .then(response => {
+          console.log(response.data.login)
+          if (response.data.login === true) {
+            this.status = true
+          }
+        })
     }
   }
 })
