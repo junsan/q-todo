@@ -51,6 +51,20 @@ export const useTodoStore = defineStore('todo', {
             this.lists.value.push(response.data.data)
           }
         })
+    },
+    addTask (name, todoListId, dueDate) {
+      const bodyFormData = new FormData()
+      bodyFormData.append('user_id', 1)
+      bodyFormData.append('todo_list_id', Number(todoListId))
+      bodyFormData.append('name', name)
+      // bodyFormData.append('due_date', dueDate)
+      console.log(dueDate)
+      api.post('/api/tasks', bodyFormData)
+        .then(response => {
+          if (response.statusText === 'Created') {
+            this.tasks.value.push(response.data.data)
+          }
+        })
     }
   }
 })

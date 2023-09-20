@@ -47,7 +47,7 @@
       </div>
     </q-item>
   </q-list>
-  <q-page-sticky position="bottom-right" :offset="[18, 18]">
+  <q-page-sticky position="bottom-right" :offset="[18, 18]" style="z-index: 999;">
     <q-btn fab icon="add" color="blue" @click="addTaskModal" />
   </q-page-sticky>
 
@@ -62,17 +62,10 @@
 
       <q-card-section class="q-pt-none">
         <q-input filled bottom-slots v-model="task" placeholder="Add task here" counter maxlength="100" >
-          <template v-slot:before>
-            <q-icon name="event" />
-          </template>
-
-          <template v-slot:append>
-            <q-btn @click="addTask" round dense flat icon="add" style="background-color: #1976D2; color: white"  />
-          </template>
         </q-input>
 
         <!-- Add Date -->
-        <div class="q-pa-md" style="max-width: 300px">
+        <div style="max-width: 300px">
           <label>Due Date</label>
           <q-input filled v-model="date" mask="date" :rules="['date']">
             <template v-slot:append>
@@ -88,11 +81,14 @@
             </template>
           </q-input>
         </div>
+        <label>Add Lists</label>
         <q-select standout="bg-teal text-white" v-model="selectedList" :options="options" />
+        <br>
       </q-card-section>
 
       <q-card-actions align="right" class="bg-cyan text-white">
         <q-btn flat label="Close" v-close-popup />
+        <q-btn flat @click="addTask" label="Save" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -194,7 +190,7 @@ const editModal = ref(false)
 const editInputTask = ref('')
 const editDateTask = ref('')
 const index = ref(null)
-const date = ref('2023/09/01')
+const date = ref(null)
 const selectedList = ref(0)
 const editSelectedList = ref(0)
 const list = ref(0)
@@ -218,6 +214,9 @@ onMounted(async () => {
 
 onMounted(async () => {
   await todoStore.getLists()
+  todoStore.lists.value.forEach(list => {
+    options.value.push({ label: list.name, value: list.id })
+  })
 })
 
 const showTasks = async (listId, title) => {
@@ -229,9 +228,6 @@ const showTasks = async (listId, title) => {
   todoStore.openDrawer = false
   subtitle.value = title
   list.value = listId
-  // if (listId === 4) {
-  //   prompt.value = true
-  // }
 }
 
 const addList = () => {
@@ -240,24 +236,16 @@ const addList = () => {
 }
 
 const addTaskModal = () => {
-  selectedList.value = subtitle.value
   addModal.value = true
+  selectedList.value.value = list.value
+  console.log(options.value)
 }
 
 const addTask = () => {
-  let tasks = {
-    id: Math.floor(Math.random() * 100),
-    list_id: selectedList.value.value,
-    name: task.value,
-    date: date.value,
-    is_completed: false
-  }
-
-  todoStore.todos.push(tasks)
+  console.log(date.value)
+  todoStore.addTask(task.value, selectedList.value.value, date.value)
   addModal.value = false
   task.value = ''
-  tasks = {}
-  todos.value = todoStore.todos.filter(todo => todo.list_id === selectedList.value.value)
 }
 
 const openEditModal = (todo, i) => {
