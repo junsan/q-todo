@@ -175,7 +175,6 @@
       </div>
     </q-item>
   </q-list>
-  <RouterLink :to="'/login'">Login</RouterLink>
 </template>
 
 <script setup>
@@ -237,13 +236,13 @@ const addList = () => {
 
 const addTaskModal = () => {
   addModal.value = true
-  selectedList.value.value = list.value
+  selectedList.value = { value: list.value, label: subtitle.value }
   console.log(options.value)
 }
 
 const addTask = () => {
   console.log(date.value)
-  todoStore.addTask(task.value, selectedList.value.value, date.value)
+  todoStore.addTask(task.value, selectedList.value.value, date.value.replaceAll('/', '-'))
   addModal.value = false
   task.value = ''
 }

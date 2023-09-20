@@ -57,7 +57,7 @@ export const useTodoStore = defineStore('todo', {
       bodyFormData.append('user_id', 1)
       bodyFormData.append('todo_list_id', Number(todoListId))
       bodyFormData.append('name', name)
-      // bodyFormData.append('due_date', dueDate)
+      bodyFormData.append('due_date', dueDate)
       console.log(dueDate)
       api.post('/api/tasks', bodyFormData)
         .then(response => {
