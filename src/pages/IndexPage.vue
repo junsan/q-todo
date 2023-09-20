@@ -104,17 +104,10 @@
 
       <q-card-section class="q-pt-none">
         <q-input filled bottom-slots v-model="editInputTask" counter maxlength="100" >
-          <template v-slot:before>
-            <q-icon name="event" />
-          </template>
-
-          <template v-slot:append>
-            <q-btn @click="editTask" round dense flat icon="save" style="background-color: #1976D2; color: white; padding: 2px;" />
-          </template>
         </q-input>
 
          <!-- Date -->
-         <div class="q-pa-md" style="max-width: 300px">
+         <div style="max-width: 300px">
             <label>Due Date</label>
             <q-input filled v-model="editDateTask" mask="date" :rules="['date']">
               <template v-slot:append>
@@ -130,10 +123,12 @@
               </template>
             </q-input>
           </div>
+          <label>Edit List</label>
           <q-select standout="bg-teal text-white" v-model="editSelectedList" :options="options" />
         </q-card-section>
       <q-card-actions align="right" class="bg-cyan text-white">
         <q-btn flat label="Close" v-close-popup />
+        <q-btn flat @click="editTask" label="Save" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -198,10 +193,11 @@ const prompt = ref(false)
 const task = ref('')
 const todos = ref([])
 const completedTasks = ref([])
-const subtitle = ref('Today')
+const subtitle = ref('General')
+const editData = ref(null)
 
 onMounted(async () => {
-  await todoStore.getTasks()
+  await todoStore.getTasksByList(1)
 })
 
 onMounted(async () => {
@@ -250,22 +246,19 @@ const addTask = () => {
 
 const openEditModal = (todo, i) => {
   index.value = i
+  editData.value = todo
   editModal.value = true
   editInputTask.value = todo.name
-  editDateTask.value = todo.date
-  const x = options.value.filter(option => {
-    return option.value === todo.list_id
+  editDateTask.value = todo.due_date
+  const editList = options.value.filter(option => {
+    return option.value === todo.todo_list_id
   })
-  editSelectedList.value = x[0].label
+  editSelectedList.value = editList[0]
 }
 
 const editTask = () => {
-  todoStore.todos[index.value].name = editInputTask.value
-  todoStore.todos[index.value].date = editDateTask.value
-  todoStore.todos[index.value].list_id = editSelectedList.value.value
+  todoStore.updateTask(editData.value, editInputTask.value, editDateTask.value, editSelectedList.value.value)
   editModal.value = false
-  if (list.value === 0) todos.value = todoStore.todos
-  else todos.value = todoStore.todos.filter(todo => todo.list_id === list.value)
 }
 
 </script>

@@ -70,6 +70,13 @@ export const useTodoStore = defineStore('todo', {
         console.log(response.data.data)
         this.getTasksByList(response.data.data.todo_list_id)
       })
+    },
+    updateTask (task, name, dueDate, listId) {
+      console.log(task)
+      const date = dueDate.split(' ')
+      api.put('/api/tasks/' + task.id + '?user_id=1&due_date=' + date[0] + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
+        this.getTasksByList(response.data.data.todo_list_id)
+      })
     }
   }
 })
