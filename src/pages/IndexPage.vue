@@ -31,7 +31,7 @@
     </q-drawer>
   <h4 style="margin: 15px; color: #333">{{ subtitle }}</h4>
   <q-list>
-    <q-item v-for="(todo, index) in todos" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
+    <q-item v-for="(todo, index) in todoStore.tasks.value" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
       <q-item-section avatar>
         <q-btn @click.stop round color="secondary" icon="check" />
       </q-item-section>
@@ -41,7 +41,7 @@
       </q-item-section>
       <div>
         <q-fab @click.stop @keypress.stop color="cyan" text-color="black" icon="keyboard_arrow_left" direction="left">
-          <q-fab-action color="primary" @click="todoStore.deleteTodo(index)" icon="delete" />
+          <q-fab-action color="primary" @click="todoStore.deleteTask(todo.id)" icon="delete" />
           <q-fab-action color="secondary" @click="openEditModal(todo, index)" icon="edit" />
         </q-fab>
       </div>
@@ -202,8 +202,6 @@ const subtitle = ref('Today')
 
 onMounted(async () => {
   await todoStore.getTasks()
-  todos.value = todoStore.tasks.value
-  console.log(todos.value)
 })
 
 onMounted(async () => {
@@ -241,8 +239,11 @@ const addTaskModal = () => {
 }
 
 const addTask = () => {
-  console.log(date.value)
-  todoStore.addTask(task.value, selectedList.value.value, date.value.replaceAll('/', '-'))
+  let dueDate = date.value
+  if (date.value !== null) {
+    dueDate = date.value.replaceAll('/', '-')
+  }
+  todoStore.addTask(task.value, selectedList.value.value, dueDate)
   addModal.value = false
   task.value = ''
 }

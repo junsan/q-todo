@@ -12,9 +12,6 @@ export const useTodoStore = defineStore('todo', {
     doubleCount: (state) => state.counter * 2
   },
   actions: {
-    deleteTodo (index) {
-      this.todos.splice(index, 1)
-    },
     async getTasks () {
       await api.get('/api/tasks').then((response) => {
         this.tasks.value = response.data.data
@@ -32,6 +29,7 @@ export const useTodoStore = defineStore('todo', {
     },
     async getTasksByList (listId) {
       await api.get('/api/list_tasks/' + listId).then((response) => {
+        console.log(response.data.data)
         this.tasks.value = response.data.data
       })
     },
@@ -62,9 +60,16 @@ export const useTodoStore = defineStore('todo', {
       api.post('/api/tasks', bodyFormData)
         .then(response => {
           if (response.statusText === 'Created') {
-            this.tasks.value.push(response.data.data)
+            this.getTasksByList(response.data.data.todo_list_id)
+            console.log(response.data.data)
           }
         })
+    },
+    deleteTask (taskId) {
+      api.delete('/api/tasks/' + taskId).then((response) => {
+        console.log(response.data.data)
+        this.getTasksByList(response.data.data.todo_list_id)
+      })
     }
   }
 })
