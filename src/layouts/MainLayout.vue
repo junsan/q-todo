@@ -20,6 +20,9 @@
     </q-header>
     <q-page-container>
       <router-view></router-view>
+      <router-link :to="'/login'">Login</router-link>
+      <br><br>
+      <router-link :to="'/index'">Index</router-link>
     </q-page-container>
   </q-layout>
 </template>

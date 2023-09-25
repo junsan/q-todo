@@ -3,6 +3,7 @@
     <q-icon name="beenhere" color="teal" size="4.4em" />
     <h4 color="teal">Q-Todo</h4>
   <div style="width: 100%; margin: 0px 40px;">
+    <div v-if="todoStore.loginError" style="color: red; padding: 7px; text-align:  center; width: 100%;">{{ todoStore.loginError }}</div>
     <q-input bg-color="teal" label-color="white" rounded standout="bg-teal text-white" bottom-slots label="Email" v-model="email">
       <template v-slot:prepend>
         <q-icon name="email" color="white" />
@@ -11,7 +12,7 @@
         <q-icon name="close" color="white" @click="email = ''" class="cursor-pointer" />
       </template>
     </q-input>
-    <q-input type="password" v-model="password" rounded standout="bg-teal text-white" bg-color="teal" label-color="white" bottom-slots label="Password">
+    <q-input required type="password" v-model="password" rounded standout="bg-teal text-white" bg-color="teal" label-color="white" bottom-slots label="Password">
       <template v-slot:prepend>
         <q-icon name="lock" color="white" />
       </template>
@@ -34,10 +35,22 @@ const password = ref('')
 const router = useRouter()
 
 const login = async () => {
-  await todoStore.login(email.value, password.value)
-  console.log(todoStore.status)
-  if (todoStore.status === true) {
-    router.push({ path: 'index' })
+  if (email.value.length > 0) {
+    const mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    if (email.value.match(mailformat)) {
+      if (password.value.length > 3) {
+        await todoStore.login(email.value, password.value)
+        if (todoStore.status === true) {
+          router.push({ path: 'index' })
+        }
+      } else {
+        todoStore.loginError = 'Password is required.'
+      }
+    } else {
+      todoStore.loginError = 'Invalid email.'
+    }
+  } else {
+    todoStore.loginError = 'Email is required.'
   }
 }
 </script>

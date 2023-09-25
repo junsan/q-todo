@@ -8,5 +8,14 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <allow-intent href="http://qtodo.store/*" />
+    <allow-intent href="*" />
     <allow-navigation href="about:*" />
+    <allow-navigation href="http://qtodo.store/*" />
+    <allow-navigation href="*" />
+    <access origin="http://qtodo.store" />
+    <access origin="http://qtodo.store/*" />
+    <access origin="http://qtodo.store/qtodo-api/public/api" />
+    <access origin="*" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
 </widget>

@@ -152,7 +152,7 @@
   </q-dialog>
   <br><br>
   <!-- Completed Task -->
-  <h4 style="margin: 15px; color: #aaa">Completed</h4>
+  <!-- <h4 style="margin: 15px; color: #aaa">Completed</h4>
   <q-list>
     <q-item v-for="(todo, index) in completedTasks" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
       <q-item-section avatar>
@@ -169,7 +169,7 @@
         </q-fab>
       </div>
     </q-item>
-  </q-list>
+  </q-list> -->
 </template>
 
 <script setup>
