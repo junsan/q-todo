@@ -3,7 +3,7 @@
     <q-icon name="beenhere" color="teal" size="4.4em" />
     <h4 color="teal">Q-Todo</h4>
   <div style="width: 100%; margin: 0px 40px;">
-    <div v-if="todoStore.loginError" style="color: red; padding: 7px; text-align:  center; width: 100%;">{{ todoStore.loginError }}</div>
+    <div v-if="todoStore.loginError" style="color: red; padding: 7px; text-align: center; width: 100%;">{{ todoStore.loginError }}</div>
     <q-input bg-color="teal" label-color="white" rounded standout="bg-teal text-white" bottom-slots label="Email" v-model="email">
       <template v-slot:prepend>
         <q-icon name="email" color="white" />
@@ -25,24 +25,14 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 import { useRouter } from 'vue-router'
-import { Cookies } from 'quasar'
 
 const todoStore = useTodoStore()
 const email = ref('')
 const password = ref('')
 const router = useRouter()
-
-onMounted(async () => {
-  if (Cookies.has('user')) {
-    await todoStore.automaticLogin()
-    if (todoStore.status === true) {
-      router.push({ path: 'index' })
-    }
-  }
-})
 
 const login = async () => {
   if (email.value.length > 0) {

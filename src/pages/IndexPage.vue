@@ -15,7 +15,23 @@
         <q-item
           clickable
           tag="a"
+          style="border-bottom:  1px rgb(25 121 215 / 64%) solid;"
+        >
+          <q-item-section
+            avatar
+          >
+            <q-icon name="playlist_add" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label style="color: #fff;">Completed</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          tag="a"
           @click.prevent="prompt = true"
+          style="border-bottom:  1px rgb(25 121 215 / 64%) solid;"
         >
           <q-item-section
             avatar
@@ -31,6 +47,7 @@
           clickable
           tag="a"
           @click.prevent="logout"
+          style="border-bottom:  1px rgb(25 121 215 / 64%) solid;"
         >
           <q-item-section
             avatar
@@ -80,7 +97,7 @@
         </q-input>
 
         <!-- Add Date -->
-        <div style="max-width: 300px">
+        <!-- <div style="max-width: 300px">
           <label>Due Date</label>
           <q-input filled v-model="date" mask="date" :rules="['date']">
             <template v-slot:append>
@@ -95,7 +112,7 @@
               </q-icon>
             </template>
           </q-input>
-        </div>
+        </div> -->
         <label>Add Lists</label>
         <q-select standout="bg-teal text-white" v-model="selectedList" :options="options" />
         <br>
@@ -122,7 +139,7 @@
         </q-input>
 
          <!-- Date -->
-         <div style="max-width: 300px">
+         <!-- <div style="max-width: 300px">
             <label>Due Date</label>
             <q-input filled v-model="editDateTask" mask="date" :rules="['date']">
               <template v-slot:append>
@@ -137,7 +154,7 @@
                 </q-icon>
               </template>
             </q-input>
-          </div>
+          </div> -->
           <label>Edit List</label>
           <q-select standout="bg-teal text-white" v-model="editSelectedList" :options="options" />
         </q-card-section>
@@ -284,6 +301,8 @@ const editTask = () => {
 const logout = () => {
   Cookies.remove('user')
   Cookies.remove('email')
-  router.push({ path: 'login' })
+  todoStore.userEmail = ''
+  window.localStorage.clear()
+  router.push({ path: '/login' })
 }
 </script>

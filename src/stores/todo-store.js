@@ -82,8 +82,8 @@ export const useTodoStore = defineStore('todo', {
     },
     updateTask (task, name, dueDate, listId) {
       console.log(task)
-      const date = dueDate.split(' ')
-      api.put('/api/tasks/' + task.id + '?user_id=' + this.userId + '&due_date=' + date[0] + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
+      const date = null
+      api.put('/api/tasks/' + task.id + '?user_id=' + this.userId + '&due_date=' + date + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
         this.getTasksByList(response.data.data.todo_list_id)
       })
     },
@@ -101,6 +101,8 @@ export const useTodoStore = defineStore('todo', {
             this.generalId = response.data.listId
             Cookies.set('email', response.data.email)
             Cookies.set('user', response.data.id)
+            window.localStorage.setItem('user', response.data.id)
+            window.localStorage.setItem('email', response.data.email)
           } else if (response.data.login === false) {
             this.loginError = response.data.error
           }
@@ -108,8 +110,9 @@ export const useTodoStore = defineStore('todo', {
         })
     },
     async automaticLogin () {
-      if (Cookies.has('user')) {
-        const userId = Cookies.get('user')
+      const value = window.localStorage.getItem('user')
+      if (value) {
+        const userId = value
         await api.get('/api/automatic_login/' + userId)
           .then(response => {
             if (response.data.login === true) {
