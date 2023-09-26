@@ -12,7 +12,8 @@ export const useTodoStore = defineStore('todo', {
     errors: [],
     loginError: '',
     userEmail: '',
-    userId: 0
+    userId: 0,
+    generalId: 0
   }),
   getters: {
     doubleCount: (state) => state.counter * 2
@@ -47,7 +48,7 @@ export const useTodoStore = defineStore('todo', {
     },
     addList (name) {
       const bodyFormData = new FormData()
-      bodyFormData.append('user_id', 1)
+      bodyFormData.append('user_id', this.userId)
       bodyFormData.append('name', name)
 
       api.post('/api/lists', bodyFormData)
@@ -59,7 +60,7 @@ export const useTodoStore = defineStore('todo', {
     },
     addTask (name, todoListId, dueDate) {
       const bodyFormData = new FormData()
-      bodyFormData.append('user_id', 1)
+      bodyFormData.append('user_id', this.userId)
       bodyFormData.append('todo_list_id', Number(todoListId))
       bodyFormData.append('name', name)
       bodyFormData.append('due_date', dueDate)
@@ -81,7 +82,7 @@ export const useTodoStore = defineStore('todo', {
     updateTask (task, name, dueDate, listId) {
       console.log(task)
       const date = dueDate.split(' ')
-      api.put('/api/tasks/' + task.id + '?user_id=1&due_date=' + date[0] + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
+      api.put('/api/tasks/' + task.id + '?user_id=' + this.userId + '&due_date=' + date[0] + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
         this.getTasksByList(response.data.data.todo_list_id)
       })
     },
@@ -96,6 +97,7 @@ export const useTodoStore = defineStore('todo', {
             this.status = true
             this.userEmail = response.data.email
             this.userId = response.data.id
+            this.generalId = response.data.listId
           } else if (response.data.login === false) {
             this.loginError = response.data.error
           }

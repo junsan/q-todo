@@ -211,7 +211,7 @@ const subtitle = ref('General')
 const editData = ref(null)
 
 onMounted(async () => {
-  await todoStore.getTasksByList(todoStore.userId)
+  await todoStore.getTasksByList(todoStore.generalId)
 })
 
 onMounted(async () => {
