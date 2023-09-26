@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
+import { Cookies } from 'quasar'
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
@@ -98,11 +99,27 @@ export const useTodoStore = defineStore('todo', {
             this.userEmail = response.data.email
             this.userId = response.data.id
             this.generalId = response.data.listId
+            Cookies.set('email', response.data.email)
+            Cookies.set('user', response.data.id)
           } else if (response.data.login === false) {
             this.loginError = response.data.error
           }
           console.log(response)
         })
+    },
+    async automaticLogin () {
+      if (Cookies.has('user')) {
+        const userId = Cookies.get('user')
+        await api.get('/api/automatic_login/' + userId)
+          .then(response => {
+            if (response.data.login === true) {
+              this.status = true
+              this.userEmail = response.data.email
+              this.userId = response.data.id
+              this.generalId = response.data.listId
+            }
+          })
+      }
     }
   }
 })

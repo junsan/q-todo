@@ -30,6 +30,7 @@
         <q-item
           clickable
           tag="a"
+          @click.prevent="logout"
         >
           <q-item-section
             avatar
@@ -190,7 +191,10 @@
 import { onMounted, ref } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 import EssentialLink from 'components/EssentialLink.vue'
+import { Cookies } from 'quasar'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const todoStore = useTodoStore()
 const options = ref([])
 const addModal = ref(false)
@@ -224,6 +228,7 @@ onMounted(async () => {
   todoStore.lists.value.forEach(list => {
     options.value.push({ label: list.name, value: list.id })
   })
+  list.value = todoStore.generalId
 })
 
 const showTasks = async (listId, title) => {
@@ -256,6 +261,7 @@ const addTask = () => {
   todoStore.addTask(task.value, selectedList.value.value, dueDate)
   addModal.value = false
   task.value = ''
+  subtitle.value = selectedList.value.label
 }
 
 const openEditModal = (todo, i) => {
@@ -275,4 +281,9 @@ const editTask = () => {
   editModal.value = false
 }
 
+const logout = () => {
+  Cookies.remove('user')
+  Cookies.remove('email')
+  router.push({ path: 'login' })
+}
 </script>

@@ -25,14 +25,24 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useTodoStore } from 'src/stores/todo-store'
 import { useRouter } from 'vue-router'
+import { Cookies } from 'quasar'
 
 const todoStore = useTodoStore()
 const email = ref('')
 const password = ref('')
 const router = useRouter()
+
+onMounted(async () => {
+  if (Cookies.has('user')) {
+    await todoStore.automaticLogin()
+    if (todoStore.status === true) {
+      router.push({ path: 'index' })
+    }
+  }
+})
 
 const login = async () => {
   if (email.value.length > 0) {
