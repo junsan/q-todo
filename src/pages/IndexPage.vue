@@ -27,6 +27,20 @@
             <q-item-label style="color: #fff;">Add List</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item
+          clickable
+          tag="a"
+        >
+          <q-item-section
+            avatar
+          >
+            <q-icon name="logout" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label style="color: #fff;">Logout</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
   <h4 style="margin: 15px; color: #333">{{ subtitle }}</h4>
@@ -197,7 +211,7 @@ const subtitle = ref('General')
 const editData = ref(null)
 
 onMounted(async () => {
-  await todoStore.getTasksByList(1)
+  await todoStore.getTasksByList(todoStore.userId)
 })
 
 onMounted(async () => {

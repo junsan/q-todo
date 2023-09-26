@@ -38,7 +38,7 @@ const login = async () => {
   if (email.value.length > 0) {
     const mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     if (email.value.match(mailformat)) {
-      if (password.value.length > 3) {
+      if (password.value.length >= 3) {
         await todoStore.login(email.value, password.value)
         if (todoStore.status === true) {
           router.push({ path: 'index' })

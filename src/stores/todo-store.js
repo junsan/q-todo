@@ -10,7 +10,9 @@ export const useTodoStore = defineStore('todo', {
     completedTasks: [],
     openDrawer: false,
     errors: [],
-    loginError: ''
+    loginError: '',
+    userEmail: '',
+    userId: 0
   }),
   getters: {
     doubleCount: (state) => state.counter * 2
@@ -27,7 +29,7 @@ export const useTodoStore = defineStore('todo', {
       })
     },
     async getLists () {
-      await api.get('/api/lists').then((response) => {
+      await api.get('/api/list_id/' + this.userId).then((response) => {
         this.lists.value = response.data.data
       })
     },
@@ -92,6 +94,8 @@ export const useTodoStore = defineStore('todo', {
           console.log(response.data.login)
           if (response.data.login === true) {
             this.status = true
+            this.userEmail = response.data.email
+            this.userId = response.data.id
           } else if (response.data.login === false) {
             this.loginError = response.data.error
           }

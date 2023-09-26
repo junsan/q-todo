@@ -15,7 +15,7 @@
           Q-Todo
         </q-toolbar-title>
 
-        <div>Q-Todo v1.1</div>
+        <div>{{ useStore.userEmail }}</div>
       </q-toolbar>
     </q-header>
     <q-page-container>
