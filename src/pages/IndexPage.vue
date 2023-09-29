@@ -16,6 +16,7 @@
           clickable
           tag="a"
           style="border-bottom:  1px rgb(25 121 215 / 64%) solid;"
+          @click.prevent="showCompletedTask"
         >
           <q-item-section
             avatar
@@ -62,24 +63,24 @@
       </q-list>
     </q-drawer>
   <h4 style="margin: 15px; color: #333">{{ subtitle }}</h4>
-  <q-list>
-    <q-item v-for="(todo, index) in todoStore.tasks.value" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
+  <q-list v-if="subtitle !== 'Completed'">
+    <q-item v-for="(todo, index) in todoStore.tasks.value" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent>
       <q-item-section avatar>
-        <q-btn @click.stop round color="secondary" icon="check" />
+        <q-btn @click.stop="completeTask(todo.id)" round color="secondary" icon="check" />
       </q-item-section>
       <q-item-section>
         <q-item-label style="font-size: 16px;">{{ todo.name }}</q-item-label>
         <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.due_date">Due Date: {{ todo.due_date }}</q-item-label>
       </q-item-section>
       <div>
-        <q-fab @click.stop @keypress.stop color="cyan" text-color="black" icon="keyboard_arrow_left" direction="left">
+        <q-fab @click.prevent @keypress.prevent color="cyan" text-color="black" icon="keyboard_arrow_left" direction="left">
           <q-fab-action color="primary" @click="todoStore.deleteTask(todo.id)" icon="delete" />
           <q-fab-action color="secondary" @click="openEditModal(todo, index)" icon="edit" />
         </q-fab>
       </div>
     </q-item>
   </q-list>
-  <q-page-sticky position="bottom-right" :offset="[18, 18]" style="z-index: 999;">
+  <q-page-sticky v-if="subtitle !== 'Completed'" position="bottom-right" :offset="[18, 18]" style="z-index: 999;">
     <q-btn fab icon="add" color="blue" @click="addTaskModal" />
   </q-page-sticky>
 
@@ -182,26 +183,23 @@
         </q-card-actions>
       </q-card>
   </q-dialog>
-  <br><br>
   <!-- Completed Task -->
-  <!-- <h4 style="margin: 15px; color: #aaa">Completed</h4>
-  <q-list>
-    <q-item v-for="(todo, index) in completedTasks" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent="openEditModal(todo, index)">
+  <q-list v-if="subtitle === 'Completed'">
+    <q-item v-for="todo in todoStore.completedTasks.value" :key="todo.id" tag="label" v-ripple style="border-bottom: 1px solid #ccc;" @click.prevent>
       <q-item-section avatar>
-        <q-btn @click.stop round color="white" class="text-black" icon="close" />
+        <q-btn @click.prevent="unCompleteTask(todo.id)" round color="white" class="text-black" icon="close" />
       </q-item-section>
       <q-item-section>
         <q-item-label style="font-size: 16px; color: #aaa; text-decoration: line-through;">{{ todo.name }}</q-item-label>
         <q-item-label style="font-size: 12px; color: #aaa" v-if="todo.due_date">Completed Date: {{ todo.due_date }}</q-item-label>
       </q-item-section>
       <div>
-        <q-fab @click.stop @keypress.stop color="white" text-color="black" icon="keyboard_arrow_left" direction="left">
-          <q-fab-action color="primary" @click="todoStore.deleteTodo(index)" icon="delete" />
-          <q-fab-action color="secondary" @click="openEditModal(todo, index)" icon="edit" />
+        <q-fab @click.prevent @keypress.prevent color="white" text-color="black" icon="keyboard_arrow_left" direction="left">
+          <q-fab-action color="primary" @click="todoStore.deleteTask(todo.id)" icon="delete" />
         </q-fab>
       </div>
     </q-item>
-  </q-list> -->
+  </q-list>
 </template>
 
 <script setup>
@@ -227,17 +225,19 @@ const titleList = ref('')
 const prompt = ref(false)
 const task = ref('')
 const todos = ref([])
-const completedTasks = ref([])
 const subtitle = ref('General')
 const editData = ref(null)
 
-onMounted(async () => {
-  await todoStore.getTasksByList(todoStore.generalId)
-})
+const unCompleteTask = async (taskId) => {
+  await todoStore.unCompleteTask(taskId)
+}
+
+const completeTask = async (taskId) => {
+  await todoStore.completeTask(taskId)
+}
 
 onMounted(async () => {
-  await todoStore.getCompletedTasks()
-  completedTasks.value = todoStore.completedTasks.value
+  await todoStore.getTasksByList(todoStore.generalId)
 })
 
 onMounted(async () => {
@@ -251,16 +251,25 @@ onMounted(async () => {
 const showTasks = async (listId, title) => {
   await todoStore.getTasksByList(listId)
   todos.value = todoStore.tasks.value
-  await todoStore.getTasksCompletedByList(listId)
-  completedTasks.value = todoStore.completedTasks.value
 
   todoStore.openDrawer = false
   subtitle.value = title
   list.value = listId
 }
 
-const addList = () => {
-  todoStore.addList(titleList.value)
+const showCompletedTask = async () => {
+  await todoStore.getTasksCompleted()
+  console.log(todoStore.completedTasks.value)
+  subtitle.value = 'Completed'
+  todoStore.openDrawer = false
+}
+
+const addList = async () => {
+  await todoStore.addList(titleList.value)
+  options.value = []
+  todoStore.lists.value.forEach(list => {
+    options.value.push({ label: list.name, value: list.id })
+  })
   titleList.value = ''
 }
 
@@ -296,11 +305,13 @@ const openEditModal = (todo, i) => {
 const editTask = () => {
   todoStore.updateTask(editData.value, editInputTask.value, editDateTask.value, editSelectedList.value.value)
   editModal.value = false
+  subtitle.value = editSelectedList.value.label
 }
 
 const logout = () => {
   Cookies.remove('user')
   Cookies.remove('email')
+  todoStore.status = false
   todoStore.userEmail = ''
   window.localStorage.clear()
   router.push({ path: '/login' })

@@ -25,11 +25,6 @@ export const useTodoStore = defineStore('todo', {
         this.tasks.value = response.data.data
       })
     },
-    async getCompletedTasks () {
-      await api.get('/api/completed').then((response) => {
-        this.completedTasks.value = response.data.data
-      })
-    },
     async getLists () {
       await api.get('/api/list_id/' + this.userId).then((response) => {
         this.lists.value = response.data.data
@@ -42,17 +37,17 @@ export const useTodoStore = defineStore('todo', {
         console.log(response)
       })
     },
-    async getTasksCompletedByList (listId) {
-      await api.get('/api/list_tasks_completed/' + listId).then((response) => {
+    async getTasksCompleted () {
+      await api.get('/api/list_tasks_completed/' + this.userId).then((response) => {
         this.completedTasks.value = response.data.data
       })
     },
-    addList (name) {
+    async addList (name) {
       const bodyFormData = new FormData()
       bodyFormData.append('user_id', this.userId)
       bodyFormData.append('name', name)
 
-      api.post('/api/lists', bodyFormData)
+      await api.post('/api/lists', bodyFormData)
         .then(response => {
           if (response.statusText === 'Created') {
             this.lists.value.push(response.data.data)
@@ -78,13 +73,14 @@ export const useTodoStore = defineStore('todo', {
       api.delete('/api/tasks/' + taskId).then((response) => {
         console.log(response.data.data)
         this.getTasksByList(response.data.data.todo_list_id)
+        this.getTasksCompleted()
       })
     },
     updateTask (task, name, dueDate, listId) {
       console.log(task)
       const date = null
       api.put('/api/tasks/' + task.id + '?user_id=' + this.userId + '&due_date=' + date + '&todo_list_id=' + listId + '&name=' + name).then((response) => {
-        this.getTasksByList(response.data.data.todo_list_id)
+        this.getTasksByList(listId)
       })
     },
     async login (email, password) {
@@ -104,6 +100,7 @@ export const useTodoStore = defineStore('todo', {
             window.localStorage.setItem('user', response.data.id)
             window.localStorage.setItem('email', response.data.email)
           } else if (response.data.login === false) {
+            this.status = false
             this.loginError = response.data.error
           }
           console.log(response)
@@ -123,6 +120,20 @@ export const useTodoStore = defineStore('todo', {
             }
           })
       }
+    },
+    async unCompleteTask (taskId) {
+      await api.get('/api/un_complete/' + taskId)
+        .then(response => {
+          console.log(response.data)
+          this.getTasksCompleted()
+        })
+    },
+    async completeTask (taskId) {
+      await api.get('/api/complete_task/' + taskId)
+        .then(response => {
+          console.log(response.data)
+          this.getTasksByList(response.data.data.todo_list_id)
+        })
     }
   }
 })
